@@ -16,7 +16,7 @@ socketChannel.on('connection', function(connection) {
 });
 
 Nodextreme.onTeams('change', function() {
-    console.log(Nodextreme.getRanking());
+    //console.log(Nodextreme.getRanking());
 });
 
 var primaryServer = http.createServer(function (request, response) {
@@ -34,7 +34,25 @@ var primaryServer = http.createServer(function (request, response) {
 
 socketChannel.installHandlers(primaryServer, { prefix: '/SocketChannel' });
 
-primaryServer.listen(8080);
+primaryServer.listen(8888);
+
+process.stdin.resume();
+process.stdin.setEncoding('utf8');
+
+process.stdin.on('data', function (chunk) {
+    if(chunk.trim() == 'start') {
+        Nodextreme.start();
+        console.log('Nodextreme Startup Live!');
+    } else if(chunk.trim() == 'pause') {
+        Nodextreme.pause();
+    } else if(chunk.trim() == 'stop') {
+        Nodextreme.stop();
+    }
+});
+
+/*process.stdin.on('end', function () {
+    process.stdout.write('end');
+});*/
 
 /*var release = new stat.Server('./release');
 

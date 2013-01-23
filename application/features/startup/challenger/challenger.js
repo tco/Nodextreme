@@ -17,10 +17,6 @@ define([
         element: '#challenger',
         container: '#StartupFeature',
 
-        events: {
-            'click button#test': 'handleTest'
-        },
-
         globalEvents: {
             'challenger.challenge': 'challengeResponse',
             'challenger.test': 'testResponse'
@@ -37,10 +33,6 @@ define([
                 self.getChallenge();
             });
 
-        },
-
-        eventHandler: function(eventData) {
-			// doMagicOnEventTriggered
         },
 
         getChallenge: function() {
@@ -74,19 +66,8 @@ define([
 
             self.$el.html(self.$template.render(challenge, directives));
 
-            if(challenge.finished) {
-                self.$template.find('#test').addClass('hide');
-            }
+            // if(challenge.finished) {}
 
-        },
-
-        handleTest: function() {
-            this.publish('socket.send', {
-                data: {
-                    action: 'test',
-                    context: 'challenger'
-                }
-            });
         },
 
         testResponse: function(eventData) {
