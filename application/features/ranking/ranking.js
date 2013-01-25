@@ -3,8 +3,9 @@ define([
     'underscore',
     'backbone',
     'features/VisibleFeature',
-    'features/featureContainer'
-], function($, _, Backbone, VisibleFeature, FeatureContainer, undefined) {
+    'features/featureContainer',
+    'features/ranking/columnDiagram/columnDiagram'
+], function($, _, Backbone, VisibleFeature, FeatureContainer, ColumnDiagram, undefined) {
     "use strict";
 
     // Ranking Feature
@@ -31,11 +32,11 @@ define([
 
             self.features = new FeatureContainer();
 
-            self.features.on('add', self.asyncRender, self);
+            self.registerFeature(new ColumnDiagram());
 
             self.when(self.templatesResolved(),function() {
-              self.$template = self.getTemplate(self.element);
-              self.resolve(true);
+                self.$template = self.getTemplate(self.element, true);
+                self.resolve(true);
             });
 
             self.publish("router.registerRoutes", self);

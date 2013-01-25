@@ -3,8 +3,9 @@ define([
     'underscore',
     'backbone',
     'features/VisibleFeature',
-    'features/featureContainer'
-], function($, _, Backbone, VisibleFeature, FeatureContainer, undefined) {
+    'features/featureContainer',
+    'features/startup/status/status'
+], function($, _, Backbone, VisibleFeature, FeatureContainer, Status, undefined) {
     "use strict";
 
     // Challenger Feature
@@ -19,13 +20,15 @@ define([
 
         globalEvents: {
             'challenger.challenge': 'challengeResponse',
-            'challenger.test': 'testResponse'
+            'challenger.advanced': 'advancedHandler'
         },
 
         initialize: function() {
             var self = this;
 
             self.loaded = $.Deferred();
+
+            self.features = new FeatureContainer();
 
             self.when(self.templatesResolved(),function() {
                 self.$template = self.getTemplate(self.element, true);
@@ -38,10 +41,14 @@ define([
         getChallenge: function() {
             this.publish("socket.send", {
                 data: {
-                    action: 'challenge',
-                    context: 'challenger'
+                    context: 'challenger',
+                    action: 'challenge'
                 }
             });
+        },
+
+        advancedHandler: function() {
+            this.getChallenge();
         },
 
         challengeResponse: function(eventData) {
@@ -50,8 +57,7 @@ define([
 
         render: function(challenge) {
 
-            var self = this,
-                directives = {
+            var directives = {
                     body: {
                         html: function() {
                             return this.body;
@@ -59,12 +65,13 @@ define([
                     }
                 };
 
-            if(!self.isRendered()) {
-                self.setElement(self.container);
-                self.setRendered(true);
+            if(!this.isRendered()) {
+                this.setElement(this.container);
+                this.setRendered(true);
             }
 
-            self.$el.html(self.$template.render(challenge, directives));
+            this.$el.html(this.$template.render(challenge, directives));
+            this.registerFeature(new Status(this.$el.find('#status-container'), challenge));
 
             // if(challenge.finished) {}
 

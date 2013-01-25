@@ -2067,6 +2067,11 @@ var jam = {
             "main": "keymaster.js"
         },
         {
+            "name": "highcharts",
+            "location": "jam/highcharts",
+            "main": "highcharts.src.js"
+        },
+        {
             "name": "less",
             "location": "jam/less",
             "main": "./lib/less/index"
@@ -2103,6 +2108,9 @@ var jam = {
         },
         "keymaster": {
             "exports": "key"
+        },
+        "highcharts": {
+            "exports": "Highcharts"
         },
         "underscore": {
             "exports": "_"

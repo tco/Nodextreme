@@ -2,21 +2,46 @@ var stat = require('node-static'),
     sockjs = require('sockjs'),
     fileServer = new stat.Server('./application'),
     http = require('http'),
-    Nodextreme = require('./lib/nodextreme.js').Nodextreme;
+    _ = require('underscore'),
+    connections = {},
+    Nodextreme = require('./lib/nodextreme.js').Nodextreme,
+    bufferedRanking = null;
 
 
-var socketChannel = sockjs.createServer();
+var socketChannel = sockjs.createServer(),
+    broadcast = function(data) {
+        _.each(connections, function(connection) {
+            connection.write(data);
+        });
+    };
 
 socketChannel.on('connection', function(connection) {
+    connections[connection.id] = connection;
     connection.on('data', function(data) {
         var parsed = JSON.parse(data);
         Nodextreme.process(parsed, connection);
     });
-    connection.on('close', function() {});
+    connection.on('close', function() {
+        delete connections[connection.id];
+    });
 });
 
 Nodextreme.onTeams('change', function() {
-    //console.log(Nodextreme.getRanking());
+    clearTimeout(bufferedRanking);
+    bufferedRanking = setTimeout(function() {
+        broadcast(Nodextreme.getRanking());
+    }, 100);
+});
+
+Nodextreme.onTeams('advance', function(team) {
+    var connectionId = team.get('connectionId'),
+        connection = connections[connectionId];
+    connection.write(JSON.stringify({
+        originalData: {
+            action: 'advanced',
+            context: 'challenger'
+        }
+    }));
 });
 
 var primaryServer = http.createServer(function (request, response) {
@@ -42,6 +67,12 @@ process.stdin.setEncoding('utf8');
 process.stdin.on('data', function (chunk) {
     if(chunk.trim() == 'start') {
         Nodextreme.start();
+        broadcast(JSON.stringify({
+            originalData: {
+                action: 'start',
+                context: 'game'
+            }
+        }));
         console.log('Nodextreme Startup Live!');
     } else if(chunk.trim() == 'pause') {
         Nodextreme.pause();

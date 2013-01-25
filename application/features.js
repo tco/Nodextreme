@@ -14,6 +14,7 @@ define('features', [
     "features/keymaster/keymaster",
     "features/navigation/navigation",
     "features/ranking/ranking",
+    "features/ranking/columnDiagram/columnDiagram",
     "features/router/router",
     "features/router/notFound/notFound",
     "features/samples/json/json",
@@ -21,6 +22,7 @@ define('features', [
     "features/socket/socket",
     "features/startup/startup",
     "features/startup/challenger/challenger",
+    "features/startup/status/status",
     "features/utils/loading/loading",
     "features/utils/toaster/toaster",
     "features/welcome/welcome"
