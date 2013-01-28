@@ -2,3 +2,6 @@
 
 rm ~/.grunt/tasks
 ln -s $(pwd)/tasks ~/.grunt/tasks
+
+rm node_modules
+ln -s ~/node_modules $(pwd)/node_modules

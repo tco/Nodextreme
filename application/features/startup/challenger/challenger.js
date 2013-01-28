@@ -20,7 +20,8 @@ define([
 
         globalEvents: {
             'challenger.challenge': 'challengeResponse',
-            'challenger.advanced': 'advancedHandler'
+            'challenger.advanced': 'advancedHandler',
+            'status.challengeSelected': 'challengeSelected'
         },
 
         initialize: function() {
@@ -51,12 +52,15 @@ define([
             this.getChallenge();
         },
 
+        challengeSelected: function(eventData) {
+            this.render(eventData.data.challenge);
+        },
+
         challengeResponse: function(eventData) {
             this.render(eventData.data.originalData.challenge);
         },
 
         render: function(challenge) {
-
             var directives = {
                     body: {
                         html: function() {
@@ -67,14 +71,15 @@ define([
 
             if(!this.isRendered()) {
                 this.setElement(this.container);
-                this.setRendered(true);
+                this.$el.html(this.$template.render(challenge, directives));
+            } else {
+                this.$template.render(challenge, directives);
             }
 
-            this.$el.html(this.$template.render(challenge, directives));
-            this.registerFeature(new Status(this.$el.find('#status-container'), challenge));
-
-            // if(challenge.finished) {}
-
+            if(!this.isRendered()) {
+                this.registerFeature(new Status(this.$el.find('#status-container'), challenge));
+                this.setRendered(true);
+            }
         },
 
         testResponse: function(eventData) {

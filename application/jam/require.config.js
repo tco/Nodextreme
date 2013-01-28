@@ -15,6 +15,11 @@ var jam = {
             "main": "domReady.js"
         },
         {
+            "name": "highcharts",
+            "location": "jam/highcharts",
+            "main": "highcharts.src.js"
+        },
+        {
             "name": "jquery",
             "location": "jam/jquery",
             "main": "dist/jquery.js"
@@ -45,7 +50,7 @@ var jam = {
             "main": "./lib/underscore.string"
         }
     ],
-    "version": "0.2.4",
+    "version": "0.2.11",
     "shim": {
         "backbone": {
             "deps": [
@@ -53,6 +58,9 @@ var jam = {
                 "underscore"
             ],
             "exports": "Backbone"
+        },
+        "highcharts": {
+            "exports": "Highcharts"
         },
         "keymaster": {
             "exports": "key"

@@ -29,6 +29,11 @@ require.config({
             'name': 'console',
             'location': 'lib',
             'main': './console'
+        },
+        {
+            'name': 'sockjs',
+            'location': 'lib',
+            'main': './sockjs-0.3.min'
         }
     ],
     shim: {

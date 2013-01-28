@@ -32,8 +32,8 @@ define([
             var self = this;
 
             self.loaded = $.Deferred();
-            console.log(challenge);
             self.challenges.push(challenge);
+            self.currentChallenge = challenge;
 
             self.when(self.templatesResolved(),function() {
                 self.setElement($element);
@@ -49,23 +49,52 @@ define([
 
         },
 
-        challengeHandler: function(eventData) {
-            console.log(eventData);
+        challengeSelected: function(event) {
+            var self = this,
+                $target = $(event.target);
 
+            self.currentChallenge = _.find(this.challenges, function(challenge) {
+                return challenge.name === $target.text();
+            });
+
+            self.publish('status.challengeSelected', {
+                data: {
+                    challenge: self.currentChallenge
+                }
+            });
+            self.renderChallenges();
+        },
+
+        challengeHandler: function(eventData) {
+            this.challenges.push(eventData.data.originalData.challenge);
+            this.currentChallenge = eventData.data.originalData.challenge;
+            this.renderChallenges();
         },
 
         renderChallenges: function() {
-            if(!this.challengesRendered) {
-                this.$el.find(this.challengesId).append(this.$challengesTemplate);
-                this.challengesRendered = true;
+            var self = this;
+
+            if(!self.challengesRendered) {
+                self.$el.find(self.challengesId).append(self.$challengesTemplate);
+                self.challengesRendered = true;
             }
-            var challenges = _.map(this.challenges, function(c) { return { challenge: c.name }; });
-            console.log(challenges);
+            var challenges = _.map(self.challenges, function(c) { return { challenge: c.name }; }),
+                directives = {
+                    'challenge': {
+                        'class': function(params) {
+                            if(this.challenge === self.currentChallenge.name) {
+                                return params.value + ' active';
+                            }
+                            return params.value;
+                        }
+                    }
+                };
 
-            console.log(this.$challengesTemplate);
 
-            this.$challengesTemplate.render({
-                challenge: challenges
+            self.$challengesTemplate.render(challenges.reverse(), directives);
+
+            $('#challenges .challenge').off('click').on('click',function(event) {
+                self.challengeSelected.call(self, event);
             });
         },
 
