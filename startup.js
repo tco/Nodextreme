@@ -1,7 +1,8 @@
 var restify = require('restify'),
     request = require('request'),
     $ = require('jquery'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    xml2js = require('xml2js');
 
 var server = restify.createServer({
     name: 'Nodextreme Server',
@@ -22,6 +23,42 @@ server.get('/hello', function (request, response, next) {
         response.send("World!");
     }
     return next();
+});
+
+server.get('/calc/:method/:n1/:n2', function (request, response, next) {
+    response.setHeader('content-type', 'text/plain');
+    response.setHeader('content-encoding', 'utf-8');
+
+    var v1 = parseInt(request.params.n1,10),
+        v2 = parseInt(request.params.n2,10),
+        method = request.params.method;
+
+    if(v1 && v2) {
+        if(method === 'reduce') {
+            response.send((v1 - v2).toString());
+        } else if(method === 'division') {
+            response.send(Math.floor(v1 / v2).toString());
+        } else if(method === 'multiply') {
+            response.send((v1 * v2).toString());
+        } else {
+            response.send((v1 + v2).toString());
+        }
+    } else {
+        response.send("false");
+    }
+    return next();
+});
+
+server.post('/convert', function (request, response, next) {
+    response.setHeader('content-type', 'application/json');
+    response.setHeader('content-encoding', 'utf-8');
+
+    var parser = new xml2js.Parser({explicitArray: false});
+    parser.parseString(request.body, function(err, result) {
+        if(!err) {
+            response.send(JSON.stringify(result));
+        }
+    });
 });
 
 server.get('/how/many/pamela', function (restifyRequest, restifyResponse, next) {
