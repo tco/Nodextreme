@@ -123,6 +123,6 @@ define(['underscore', 'config', 'tools/polyfills'], function(_, config, polyfill
         console.log(subscriptions);
         console.log(eventCalls);
     }
-
+    window.eventMachine = eventMachine;
     return eventMachine;
 });

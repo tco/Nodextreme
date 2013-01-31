@@ -21,6 +21,8 @@ define([
             'toaster.message': 'messageReceived'
         },
 
+        queue: [],
+
         initialize: function() {
             var self = this;
 
@@ -30,24 +32,44 @@ define([
                 self.$template = self.getTemplate(self.templateId);
                 self.resolve(true);
             });
+
+            this.queueHandler(this);
+
+        },
+
+        queueHandler: function queueHandler(toaster) {
+            var element = toaster.queue.shift(),
+                $element = toaster.$el;
+            if(element !== undefined) {
+                $element.append(element);
+                $element.addClass('center');
+                setTimeout(function() {
+                    $element.addClass('right');
+                    setTimeout(function() {
+                        element.remove();
+                        $element.removeClass('center right');
+                        setTimeout(function() {
+                            queueHandler(toaster);
+                        }, 500);
+                    }, 500);
+                }, 2000);
+            } else {
+                setTimeout(function() {
+                    queueHandler(toaster);
+                }, 200);
+            }
         },
 
         messageReceived: function(eventData) {
             var data = {
-                'alert-heading': 'MESSAGE RECEIVED!',
-                'alert-message': eventData.data.originalData.message
-            };
+                    'alert-heading': 'MESSAGE RECEIVED!',
+                    'alert-message': eventData.data.originalData.message
+                },
+                element = this.getTemplate(this.templateId);
 
-            var elem = this.getTemplate(this.templateId);
-            elem.render(data);
+            element.render(data);
 
-            this.$el.append(elem);
-            elem.queue(function() {
-                setTimeout(function() {
-                    elem.dequeue();
-                    elem.remove();
-                }, 5000);
-            });
+            this.queue.push(element);
         },
 
         handleError: function(eventData) {
