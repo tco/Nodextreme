@@ -20,6 +20,10 @@ define([
             'navigation.activeFeatureSet': 'activated'
         },
 
+        events: {
+            'click #register': 'registerClicked'
+        },
+
         routes: {
             '':         'render',
             'welcome':  'render'
@@ -38,6 +42,10 @@ define([
             self.publish('router.registerRoutes', self);
             self.publish('moduleInitialized', self);
 
+        },
+
+        registerClicked: function() {
+            this.publish('navigation.right');
         },
 
         render: function() {
