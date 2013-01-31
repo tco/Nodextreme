@@ -1,3 +1,4 @@
 node_modules
 lib/modules
 .DS_Store
+/release
