@@ -29,6 +29,7 @@ define([
 
             self.socket.addEventListener('open', function() {
                 self.connected = true;
+                self.publish('socket.connected');
             });
 
             self.socket.addEventListener('message', function(message) {

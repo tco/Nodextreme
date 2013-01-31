@@ -70,6 +70,31 @@ server.post('/convert', function (request, response, next) {
     });
 });
 
+server.get('shift', function(request, response, next) {
+    response.setHeader('content-type', 'text/plain');
+    response.setHeader('content-encoding', 'utf-8');
+    console.log(request.params);
+    var hash = request.params.hash,
+        index = request.params.index,
+        shiftHash = function(guid, index) {
+            var characters = 'abcdefghijklmnopqrstuvwxyz1234567890'.split('');
+            return guid.replace(/[^-]/g, function(character) {
+                var characterIndex = character.charCodeAt(0),
+                    arrayIndex = characters.indexOf(character),
+                    newIndex = parseInt(arrayIndex, 10) + parseInt(index, 10);
+                if(newIndex > 35) {
+                    newIndex = newIndex - 35;
+                }
+                return characters[newIndex];
+            });
+        },
+        guid = shiftHash(hash, index);
+
+
+    response.send(guid);
+
+});
+
 server.get('/how/many/pamela', function (restifyRequest, restifyResponse, next) {
     request({
         uri: "https://www.google.com/search",

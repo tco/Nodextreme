@@ -23,7 +23,9 @@ define([
 
         globalEvents: {
             'navigation.activeFeatureSet': 'activated',
-            'startup.register': 'registerResponse'
+            'startup.register': 'registerResponse',
+            'startup.state': 'loadState',
+            'socket.connected': 'getState'
         },
 
         routes: {
@@ -76,6 +78,21 @@ define([
                 port = $("#port").val();
 
             this.register(teamName, port);
+        },
+
+        getState: function() {
+            this.publish('socket.send', {
+                data: {
+                    action: 'state',
+                    context: 'startup'
+                }
+            });
+        },
+
+        loadState: function(eventData) {
+            if(eventData.data.status === 'SUCCESS') {
+                this.loadChallenger();
+            }
         },
 
         register: function(teamName, port) {
