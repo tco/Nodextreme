@@ -101,7 +101,7 @@ define([
 
         loadState: function(eventData) {
             if(eventData.data.status === 'SUCCESS') {
-                this.loadChallenger();
+                this.loadChallenger(eventData.data);
             }
         },
 
@@ -129,8 +129,13 @@ define([
             // this.registerFeature(new TeamInfo(data));
         },
 
-        loadChallenger: function() {
-            this.registerFeature(new Challenger);
+        loadChallenger: function(eventData) {
+            var options = {};
+
+            if(eventData && eventData.originalData.challenges) {
+                options.challenges = eventData.originalData.challenges;
+            }
+            this.registerFeature(new Challenger(options));
         }
 
     });

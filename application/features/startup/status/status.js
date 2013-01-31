@@ -30,10 +30,21 @@ define([
             'game.start':           'gameStarted'
         },
 
-        initialize: function($element, challenge) {
+        initialize: function($element, challenge, options) {
             var self = this;
 
             self.loaded = $.Deferred();
+
+            if(options.challenges) {
+                _.each(options.challenges, function(challenge, name) {
+                    self.challenges.push({
+                        name: name,
+                        body: challenge.data
+                    });
+                });
+                self.challengeResults = options.challenges;
+            }
+                
             self.challenges.push(challenge);
             self.currentChallenge = challenge;
 
@@ -45,6 +56,9 @@ define([
                 self.$template = self.getTemplate(self.element);
 
                 self.renderChallenges();
+                if(options.challenges) {
+                    self.gameStarted();
+                }
 
                 self.resolve(true);
             });

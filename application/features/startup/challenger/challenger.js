@@ -24,9 +24,10 @@ define([
             'status.challengeSelected': 'challengeSelected'
         },
 
-        initialize: function() {
+        initialize: function(options) {
             var self = this;
 
+            self.options = options;
             self.loaded = $.Deferred();
 
             self.features = new FeatureContainer();
@@ -77,7 +78,7 @@ define([
             }
 
             if(!this.isRendered()) {
-                this.registerFeature(new Status(this.$el.find('#status-container'), challenge));
+                this.registerFeature(new Status(this.$el.find('#status-container'), challenge, this.options));
                 this.setRendered(true);
             }
         },
