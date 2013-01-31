@@ -25,6 +25,15 @@ server.get('/hello', function (request, response, next) {
     return next();
 });
 
+server.get('/chess', function (request, response, next) {
+    response.setHeader('content-type', 'text/plain');
+    response.setHeader('content-encoding', 'utf-8');
+    
+    response.send('f6,e4,d2,f3');
+    
+    return next();
+});
+
 server.get('/calc/:method/:n1/:n2', function (request, response, next) {
     response.setHeader('content-type', 'text/plain');
     response.setHeader('content-encoding', 'utf-8');

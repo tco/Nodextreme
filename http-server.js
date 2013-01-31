@@ -44,6 +44,18 @@ Nodextreme.onTeams('advance', function(team) {
     }));
 });
 
+Nodextreme.onTeams('challenges', function(team) {
+    var connectionId = team.get('connectionId'),
+        connection = connections[connectionId];
+    connection.write(JSON.stringify({
+        originalData: {
+            action: 'challenges',
+            challenges: team.challenges,
+            context: 'challenger'
+        }
+    }));
+});
+
 var primaryServer = http.createServer(function (request, response) {
     if(request.method === "GET") {
         request.addListener('end', function () {

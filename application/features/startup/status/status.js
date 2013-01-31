@@ -21,9 +21,11 @@ define([
 
         started: false,
         challenges: [],
+        challengeResults: {},
 
         globalEvents: {
             'challenger.challenge': 'challengeHandler',
+            'challenger.challenges': 'challengesHandler',
             'ranking.update':       'resetTimer',
             'game.start':           'gameStarted'
         },
@@ -51,10 +53,11 @@ define([
 
         challengeSelected: function(event) {
             var self = this,
-                $target = $(event.target);
+                $target = $(event.target).closest('li'),
+                name = $target.attr('data-name');
 
             self.currentChallenge = _.find(this.challenges, function(challenge) {
-                return challenge.name === $target.text();
+                return name === challenge.name;
             });
 
             self.publish('status.challengeSelected', {
@@ -71,6 +74,11 @@ define([
             this.renderChallenges();
         },
 
+        challengesHandler: function(eventData) {
+            this.challengeResults = eventData.data.originalData.challenges;
+            this.renderChallenges();
+        },
+
         renderChallenges: function() {
             var self = this;
 
@@ -78,18 +86,34 @@ define([
                 self.$el.find(self.challengesId).append(self.$challengesTemplate);
                 self.challengesRendered = true;
             }
-            var challenges = _.map(self.challenges, function(c) { return { challenge: c.name }; }),
+            var challenges = _.map(self.challenges, function(c) { return { challenge: c.name}; }),
                 directives = {
                     'challenge': {
                         'class': function(params) {
-                            if(this.challenge === self.currentChallenge.name) {
-                                return params.value + ' active';
+                            var success = false,
+                                ret = params.value,
+                                context = this;
+
+                            _.each(self.challengeResults, function(challenge, name) {
+                                if(name === context.challenge) {
+                                    if(challenge) {
+                                        success = true;
+                                    }
+                                }
+                            });
+                            if(success) {
+                                ret += ' success';
                             }
-                            return params.value;
+                            if(this.challenge === self.currentChallenge.name) {
+                                ret += ' active';
+                            }
+                            return ret;
+                        },
+                        'data-name': function() {
+                            return this.challenge;
                         }
                     }
                 };
-
 
             self.$challengesTemplate.render(challenges.reverse(), directives);
 
