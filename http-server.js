@@ -93,7 +93,12 @@ process.stdin.resume();
 process.stdin.setEncoding('utf8');
 
 process.stdin.on('data', function (chunk) {
-    if(chunk.trim() == 'start') {
+    var words = chunk.trim().split(" "),
+        command = words.shift();
+
+    console.log(words);
+
+    if(command == 'start') {
         Nodextreme.start();
         broadcast(JSON.stringify({
             originalData: {
@@ -102,10 +107,24 @@ process.stdin.on('data', function (chunk) {
             }
         }));
         console.log('Nodextreme Startup Live!');
-    } else if(chunk.trim() == 'pause') {
-        Nodextreme.pause();
-    } else if(chunk.trim() == 'stop') {
+    } else if(command == 'stop') {
         Nodextreme.stop();
+        broadcast(JSON.stringify({
+            originalData: {
+                action: 'stop',
+                context: 'game'
+            }
+        }));
+        console.log('Nodextreme Startup Stopped!');
+    } else if(command == 'broadcast') {
+        console.log("broadcasting", words.join(" "));
+        broadcast(JSON.stringify({
+            originalData: {
+                action: 'message',
+                context: 'toaster',
+                message: words.join(" ")
+            }
+        }));
     }
 });
 

@@ -4,8 +4,9 @@ define([
     'backbone',
     'sockjs',
     'features/baseFeature',
-    'features/featureContainer'
-], function($, _, Backbone, SockJS, BaseFeature, FeatureContainer, undefined) {
+    'features/featureContainer',
+    'config'
+], function($, _, Backbone, SockJS, BaseFeature, FeatureContainer, config, undefined) {
     "use strict";
 
     // Socket Feature
@@ -56,7 +57,9 @@ define([
 
         handleMessage: function(message) {
             var parsed = JSON.parse(message.data);
-            console.log(parsed);
+            if(config.DEBUG) {
+                console.log(parsed);
+            }
             this.publish(this.join(parsed.originalData.context, ".",  parsed.originalData.action), {
                 data: parsed
             });
