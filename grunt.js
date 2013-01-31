@@ -170,7 +170,7 @@ module.exports = function(grunt) {
                 },
                 paths: {
                     domReady:            'jam/domReady/domReady',
-                    jquery:              'jam/jquery/jquery',
+                    jquery:              'jam/jquery/dist/jquery',
                     underscore:          'jam/underscore/underscore',
                     'underscore.string': 'jam/underscore.string/lib/underscore.string',
                     backbone:            'jam/backbone/backbone',
@@ -180,6 +180,9 @@ module.exports = function(grunt) {
                     'bootstrap-alert':   '../application/jam/bootstrap/js/bootstrap-alert',
                     'bootstrap-modal':   '../application/jam/bootstrap/js/bootstrap-modal',
                     keymaster:           'jam/keymaster/keymaster',
+                    console:             'lib/console',
+                    highcharts:          'jam/highcharts/highcharts.src',
+                    sockjs:              'lib/sockjs-0.3.min',
                     models:              'models',
                     collections:         'collections',
                     templates:           'templates',
