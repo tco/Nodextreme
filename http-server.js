@@ -5,8 +5,7 @@ var stat = require('node-static'),
     _ = require('underscore'),
     connections = {},
     Nodextreme = require('./lib/nodextreme.js').Nodextreme,
-    bufferedRanking = null,
-    bufferedChallenges = null;
+    bufferedRanking = null;
 
 
 var socketChannel = sockjs.createServer(),
@@ -54,22 +53,23 @@ Nodextreme.onTeams('advance', function(team, challenge, finished) {
             context: 'toaster'
         }
     }),connection);
+
+    if(finished) {
+        Nodextreme.stop();
+    }
 });
 
 Nodextreme.onTeams('challenges', function(team) {
     var connectionId = team.get('connectionId'),
         connection = connections[connectionId];
 
-    clearTimeout(bufferedChallenges);
-    bufferedChallenges = setTimeout(function() {
-        connection.write(JSON.stringify({
-            originalData: {
-                action: 'challenges',
-                challenges: team.get('challenges'),
-                context: 'challenger'
-            }
-        }));
-    }, 1000);
+    connection.write(JSON.stringify({
+        originalData: {
+            action: 'challenges',
+            challenges: team.get('challenges'),
+            context: 'challenger'
+        }
+    }));
 });
 
 var primaryServer = http.createServer(function (request, response) {
