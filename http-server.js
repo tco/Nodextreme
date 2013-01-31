@@ -5,13 +5,16 @@ var stat = require('node-static'),
     _ = require('underscore'),
     connections = {},
     Nodextreme = require('./lib/nodextreme.js').Nodextreme,
-    bufferedRanking = null;
+    bufferedRanking = null,
+    bufferedChallenges = null;
 
 
 var socketChannel = sockjs.createServer(),
-    broadcast = function(data) {
+    broadcast = function(data, teamConnection) {
         _.each(connections, function(connection) {
-            connection.write(data);
+            if(!teamConnection || (teamConnection && connection !== teamConnection)) {
+                connection.write(data);
+            }
         });
     };
 
@@ -33,7 +36,7 @@ Nodextreme.onTeams('change', function() {
     }, 100);
 });
 
-Nodextreme.onTeams('advance', function(team) {
+Nodextreme.onTeams('advance', function(team, challenge, finished) {
     var connectionId = team.get('connectionId'),
         connection = connections[connectionId];
     connection.write(JSON.stringify({
@@ -42,18 +45,31 @@ Nodextreme.onTeams('advance', function(team) {
             context: 'challenger'
         }
     }));
+
+    // Send notification to all teams that this one has advanced
+    broadcast(JSON.stringify({
+        originalData: {
+            message: !finished ? team.get('name') + ' advanced ' + challenge.name : team.get('name') + ' finished the eXtreme startup, Congratz',
+            action: 'message',
+            context: 'toaster'
+        }
+    }),connection);
 });
 
 Nodextreme.onTeams('challenges', function(team) {
     var connectionId = team.get('connectionId'),
         connection = connections[connectionId];
-    connection.write(JSON.stringify({
-        originalData: {
-            action: 'challenges',
-            challenges: team.challenges,
-            context: 'challenger'
-        }
-    }));
+
+    clearTimeout(bufferedChallenges);
+    bufferedChallenges = setTimeout(function() {
+        connection.write(JSON.stringify({
+            originalData: {
+                action: 'challenges',
+                challenges: team.get('challenges'),
+                context: 'challenger'
+            }
+        }));
+    }, 1000);
 });
 
 var primaryServer = http.createServer(function (request, response) {

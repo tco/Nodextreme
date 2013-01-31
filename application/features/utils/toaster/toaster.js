@@ -17,7 +17,8 @@ define([
         element: '#toaster',
         templateId: '#toaster-alert',
         globalEvents: {
-            'ajaxError': 'handleError'
+            'ajaxError': 'handleError',
+            'toaster.message': 'messageReceived'
         },
 
         initialize: function() {
@@ -31,14 +32,28 @@ define([
             });
         },
 
-        handleError: function(eventData) {
-            var head = 'Järjestelmävirhe',
-                message = 'Järjestelmä virhe. Ole hyvä ja yritä uudelleen myöhemmin';
+        messageReceived: function(eventData) {
+            var data = {
+                'alert-heading': 'MESSAGE RECEIVED!',
+                'alert-message': eventData.data.originalData.message
+            };
 
-            if(eventData.data.xhr.status === 401) {
-                head = 'Pääsy estetty';
-                message = 'Käyttäjäsessio on vanhentunut. Ole hyvä ja kirjaudu uudelleen.';
-            }
+            var elem = this.getTemplate(this.templateId);
+            elem.render(data);
+
+            this.$el.append(elem);
+            elem.queue(function() {
+                setTimeout(function() {
+                    elem.dequeue();
+                    elem.remove();
+                }, 5000);
+            });
+        },
+
+        handleError: function(eventData) {
+            var head = 'Error',
+                message = 'Ajax request failed!';
+
             var data = {
                 'alert-heading': head,
                 'alert-message': message
