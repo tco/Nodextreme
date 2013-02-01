@@ -38,12 +38,17 @@ Nodextreme.onTeams('change', function() {
 Nodextreme.onTeams('advance', function(team, challenge, finished) {
     var connectionId = team.get('connectionId'),
         connection = connections[connectionId];
-    connection.write(JSON.stringify({
-        originalData: {
-            action: 'advanced',
-            context: 'challenger'
-        }
-    }));
+
+    if(connection) {
+        connection.write(JSON.stringify({
+            originalData: {
+                action: 'advanced',
+                context: 'challenger'
+            }
+        }));
+    } else {
+        console.log("no connection found for team:",team.get('name'));
+    }
 
     // Send notification to all teams that this one has advanced
     broadcast(JSON.stringify({
@@ -63,13 +68,18 @@ Nodextreme.onTeams('challenges', function(team) {
     var connectionId = team.get('connectionId'),
         connection = connections[connectionId];
 
-    connection.write(JSON.stringify({
-        originalData: {
-            action: 'challenges',
-            challenges: team.get('challenges'),
-            context: 'challenger'
-        }
-    }));
+    if(connection) {
+        connection.write(JSON.stringify({
+            originalData: {
+                action: 'challenges',
+                challenges: team.get('challenges'),
+                context: 'challenger'
+            }
+        }));
+    } else {
+        console.log("no connection found for team:",team.get('name'));
+    }
+
 });
 
 var primaryServer = http.createServer(function (request, response) {
@@ -95,8 +105,6 @@ process.stdin.setEncoding('utf8');
 process.stdin.on('data', function (chunk) {
     var words = chunk.trim().split(" "),
         command = words.shift();
-
-    console.log(words);
 
     if(command == 'start') {
         Nodextreme.start();

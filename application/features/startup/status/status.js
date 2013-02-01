@@ -44,7 +44,7 @@ define([
                 });
                 self.challengeResults = options.challenges;
             }
-                
+
             self.challenges.push(challenge);
             self.currentChallenge = challenge;
 
@@ -110,7 +110,7 @@ define([
 
                             _.each(self.challengeResults, function(challenge, name) {
                                 if(name === context.challenge) {
-                                    if(challenge) {
+                                    if(challenge.success) {
                                         success = true;
                                     }
                                 }
