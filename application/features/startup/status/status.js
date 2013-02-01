@@ -39,10 +39,16 @@ define([
                 _.each(options.challenges, function(challenge, name) {
                     self.challenges.push({
                         name: name,
+                        success: challenge.success,
                         body: challenge.data
                     });
                 });
-                self.challengeResults = options.challenges;
+                self.challengeResults = _.map(options.challenges, function(challenge, name) {
+                    return {
+                        name: name,
+                        success: challenge.success
+                    };
+                });
             }
 
             self.challenges.push(challenge);
@@ -89,7 +95,12 @@ define([
         },
 
         challengesHandler: function(eventData) {
-            this.challengeResults = eventData.data.originalData.challenges;
+            this.challengeResults = _.map(eventData.data.originalData.challenges, function(challenge, name) {
+                return {
+                    name: name,
+                    success: challenge
+                };
+            });
             this.renderChallenges();
         },
 
@@ -100,6 +111,7 @@ define([
                 self.$el.find(self.challengesId).append(self.$challengesTemplate);
                 self.challengesRendered = true;
             }
+
             var challenges = _.map(self.challenges, function(c) { return { challenge: c.name}; }),
                 directives = {
                     'challenge': {
@@ -108,8 +120,8 @@ define([
                                 ret = params.value,
                                 context = this;
 
-                            _.each(self.challengeResults, function(challenge, name) {
-                                if(name === context.challenge) {
+                            _.each(self.challengeResults, function(challenge) {
+                                if(challenge.name === context.challenge) {
                                     if(challenge.success) {
                                         success = true;
                                     }
