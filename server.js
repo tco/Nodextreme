@@ -25,7 +25,7 @@ app.configure(function(){
     app.use(express.static(__dirname + '/application'));
 });
 
-var server = app.listen(8081);
+var server = app.listen(8080);
 var io = socket.listen(server);
 
 io.set('log level', 0);
