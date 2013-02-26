@@ -43,11 +43,24 @@ define([
                         body: challenge.data
                     });
                 });
-                self.challengeResults = options.challenges;
+                self.challengeResults = _.map(options.challenges, function(challenge, name) {
+                    return {
+                        name: name,
+                        success: challenge.success
+                    };
+                });
             }
 
-            self.challenges.push(challenge);
-            self.currentChallenge = challenge;
+            var ch = _.find(self.challenges, function(ch) {
+                return ch.name === challenge.name;
+            });
+
+            if(!ch) {
+                self.challenges.push(challenge);
+                self.currentChallenge = challenge;
+            } else {
+                self.currentChallenge = _.last(self.challenges);
+            }
 
             self.when(self.templatesResolved(),function() {
                 self.setElement($element);
