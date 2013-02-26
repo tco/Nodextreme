@@ -61,7 +61,7 @@ define([
             } else {
                 self.currentChallenge = _.last(self.challenges);
             }
-            
+
 
             self.when(self.templatesResolved(),function() {
                 self.setElement($element);
