@@ -39,40 +39,15 @@ define([
                 _.each(options.challenges, function(challenge, name) {
                     self.challenges.push({
                         name: name,
-<<<<<<< Updated upstream
                         success: challenge.success,
-                        body: challenge.data
-                    });
-                });
-                self.challengeResults = _.map(options.challenges, function(challenge, name) {
-                    return {
-                        name: name,
-                        success: challenge.success
-                    };
-                });
-            }
-
-            var ch = _.find(self.challenges, function(ch) {
-                return ch.name === challenge.name;
-            });
-
-            if(!ch) {
-                self.challenges.push(challenge);
-                self.currentChallenge = challenge;
-            } else {
-                self.currentChallenge = _.last(self.challenges);
-            }
-
-=======
                         body: challenge.data
                     });
                 });
                 self.challengeResults = options.challenges;
             }
-                
+
             self.challenges.push(challenge);
             self.currentChallenge = challenge;
->>>>>>> Stashed changes
 
             self.when(self.templatesResolved(),function() {
                 self.setElement($element);
@@ -116,7 +91,6 @@ define([
 
         challengesHandler: function(eventData) {
             this.challengeResults = _.map(eventData.data.originalData.challenges, function(challenge, name) {
-                console.log(challenge);
                 return {
                     name: name,
                     success: challenge.success
