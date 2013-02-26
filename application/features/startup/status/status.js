@@ -39,6 +39,7 @@ define([
                 _.each(options.challenges, function(challenge, name) {
                     self.challenges.push({
                         name: name,
+<<<<<<< Updated upstream
                         success: challenge.success,
                         body: challenge.data
                     });
@@ -62,6 +63,16 @@ define([
                 self.currentChallenge = _.last(self.challenges);
             }
 
+=======
+                        body: challenge.data
+                    });
+                });
+                self.challengeResults = options.challenges;
+            }
+                
+            self.challenges.push(challenge);
+            self.currentChallenge = challenge;
+>>>>>>> Stashed changes
 
             self.when(self.templatesResolved(),function() {
                 self.setElement($element);
