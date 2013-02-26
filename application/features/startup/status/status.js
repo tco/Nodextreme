@@ -105,9 +105,10 @@ define([
 
         challengesHandler: function(eventData) {
             this.challengeResults = _.map(eventData.data.originalData.challenges, function(challenge, name) {
+                console.log(challenge);
                 return {
                     name: name,
-                    success: challenge
+                    success: challenge.success
                 };
             });
             this.renderChallenges();

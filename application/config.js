@@ -8,7 +8,7 @@ define("config", function() {
 
     var config = {
         DEBUG: false,
-        DEBUG_EM: true,
+        DEBUG_EM: false,
         EVENTS: false,
         AJAXCACHE: false,
         HOST: LOCALHOST,

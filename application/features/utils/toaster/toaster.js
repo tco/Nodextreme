@@ -43,7 +43,6 @@ define([
             if(element !== undefined) {
                 $element.append(element);
                 $element.addClass('center');
-                // TODO: find out if this can be asked from the browser
                 setTimeout(function() {
                     $element.addClass('right');
                     setTimeout(function() {
@@ -70,7 +69,7 @@ define([
 
             element.render(data);
 
-            this.queueHandler.push(element);
+            this.queue.push(element);
         },
 
         handleError: function(eventData) {

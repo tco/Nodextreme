@@ -2,11 +2,11 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'sockjs',
     'features/baseFeature',
     'features/featureContainer',
+    'lib/socket.io',
     'config'
-], function($, _, Backbone, SockJS, BaseFeature, FeatureContainer, config, undefined) {
+], function($, _, Backbone, BaseFeature, FeatureContainer, io, config, undefined) {
     "use strict";
 
     // Socket Feature
@@ -26,14 +26,14 @@ define([
             self.loaded = $.Deferred();
             self.resolve(true);
 
-            self.socket = new SockJS('/SocketChannel');
+            self.socket = io.connect();
 
-            self.socket.addEventListener('open', function() {
+            self.socket.on('connect', function() {
                 self.connected = true;
                 self.publish('socket.connected');
             });
 
-            self.socket.addEventListener('message', function(message) {
+            self.socket.on('data', function(message) {
                 self.handleMessage(message);
             });
 
@@ -48,15 +48,15 @@ define([
             }
 
             if(self.connected) {
-                self.socket.send(data);
+                self.socket.emit('data', data);
             } else {
-                throw new Error("SockJS not connected");
+                throw new Error("Socket.io not connected");
             }
 
         },
 
         handleMessage: function(message) {
-            var parsed = JSON.parse(message.data);
+            var parsed = JSON.parse(message);
             if(config.DEBUG) {
                 console.log(parsed);
             }

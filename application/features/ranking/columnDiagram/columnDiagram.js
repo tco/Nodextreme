@@ -40,6 +40,7 @@ define([
                 credits: {
                     enabled: false
                 },
+                height: '100%',
                 chart: {
                     renderTo: renderTo,
                     type: 'column'
@@ -80,11 +81,11 @@ define([
 
         update: function(eventData) {
             var data = eventData.data.originalData.data,
-                teams = ['Points', 'Failures'],
+                teams = ['Points'],
                 series = _.map(data, function(t) {
                     return {
                         name: t.name,
-                        data: [t.points, t.failures]
+                        data: [t.points]
                     };
                 });
 
